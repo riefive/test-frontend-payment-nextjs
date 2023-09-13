@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Alert from '@mui/material/Alert'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -13,7 +12,9 @@ import IconButton from '@mui/material/IconButton'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import CloseIcon from '@mui/icons-material/Close'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import * as React from 'react'
 import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { email, minLength, string, safeParse } from 'valibot'
 
 const defaultTheme = createTheme()
@@ -36,12 +37,13 @@ function Copyright(props: any) {
   )
 }
 
-export default function Login() {
+const LoginComponent = (): JSX.Element => {
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [models, setModels] = React.useState({ email: '', password: '' })
   const [errorMessage, setErrorMessage]: any = React.useState('Not available')
   const [validations, setValidations]: any = React.useState({})
+  const router = useRouter()
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') return
@@ -66,12 +68,17 @@ export default function Login() {
       setErrorMessage('Error validations')
       setOpen(true)
     } else {
-      const res = await signIn('credentials', {
+      const result: any = await signIn('credentials', {
         email: models.email,
         password: models.password,
         redirect: false,
       })
-      console.log(res)
+      if (result.ok) {
+        router.push('/')
+      } else {
+        setErrorMessage(result.error)
+        setOpen(true)
+      }
     }
     setTimeout(() => {
       setLoading(false)
@@ -155,3 +162,5 @@ export default function Login() {
     </ThemeProvider>
   )
 }
+
+export default LoginComponent

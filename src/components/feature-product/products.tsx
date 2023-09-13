@@ -1,4 +1,3 @@
-import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -10,36 +9,35 @@ import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import LocalMallIcon from '@mui/icons-material/LocalMall'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import * as React from 'react'
 
 const defaultTheme = createTheme()
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 const textTitle = 'Happy Shopping'
 
-export default function Album() {
+const ProductsComponent = (props: any): JSX.Element => {
+  const ExitAction = props && props.status === 'authenticated' ? <Tooltip title="Sign Out"><ExitToAppIcon sx={{ mr: 0 }} /></Tooltip> : <span />
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <AppBar position="fixed">
-        <Toolbar sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <Toolbar>
           <LocalMallIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
+          <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             {textTitle}
           </Typography>
+          {ExitAction}
         </Toolbar>
       </AppBar>
       <main>
-        <Box
-          sx={{
-            bgcolor: 'background.paper',
-            pt: 12,
-            pb: 6,
-          }}
-        >
+        <Box sx={{ bgcolor: 'background.paper', pt: 12, pb: 6 }}>
           <Container maxWidth="sm">
             <Typography component="h1" variant="h3" align="center" color="text.primary" gutterBottom>
               {textTitle}
@@ -79,3 +77,5 @@ export default function Album() {
     </ThemeProvider>
   )
 }
+
+export default ProductsComponent

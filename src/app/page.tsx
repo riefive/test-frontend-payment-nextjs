@@ -1,11 +1,17 @@
 'use client'
 import { useSession } from 'next-auth/react'
-import { middlewareGetSession } from '@/methods/middleware-client'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { isLoggedIn } from '@/methods/middleware-client'
+import Products from '@/components/feature-product/products'
 
 export default function Home() {
-  const { data: session } = useSession()
+  const { status, data: session } = useSession()
+  const router = useRouter()
 
-  middlewareGetSession(session)
+  useEffect(() => {
+    isLoggedIn({ status, session, router })
+  }, [status, session, router])
 
-  return <div>Home</div>
+  return <Products status={status} />
 }

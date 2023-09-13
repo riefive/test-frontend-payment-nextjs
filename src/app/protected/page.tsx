@@ -2,21 +2,22 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { isRestricted } from '@/methods/middleware-client'
 
 const Protected = () => {
-  const { status, data } = useSession()
+  const { status, data: session } = useSession()
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/signin')
-  }, [router, status])
+    isRestricted({ status, session, router })
+  }, [status, session, router])
 
   if (status === 'authenticated')
     return (
-      <div>
+      <pre>
         This page is Protected for special people. like{'\n'}
-        {JSON.stringify(data.user, null, 2)}
-      </div>
+        {JSON.stringify(session, null, 4)}
+      </pre>
     )
 
   return <div>loading</div>
