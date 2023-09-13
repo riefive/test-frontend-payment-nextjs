@@ -1,6 +1,8 @@
 'use client'
 import Products from '@/components/feature-product/products'
 
-export default function PageProducts() {
+const PageProducts = (): JSX.Element => {
   return <Products />
 }
+
+export default PageProducts

@@ -28,20 +28,18 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: '/signin',
-    // error: '/auth/error',
-    // signOut: '/auth/signout'
   },
   callbacks: {
     jwt(params: any) {
-      console.log(params)
       if (params.user?.role) params.token.role = params.user.role
       if (params.user?.accessToken) params.token.accessToken = params.user.accessToken
       if (params.user?.refreshToken) params.token.refreshToken = params.user.refreshToken
       return params.token
     },
     session({ session, token }) {
-      console.log(token)
-      console.log(session)
+      if (session.user && token) {
+        Object.assign(session.user, { ...token })
+      }
       return session
     },
   },
