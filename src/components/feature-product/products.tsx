@@ -1,12 +1,12 @@
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
-import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
@@ -16,6 +16,9 @@ import LocalMallIcon from '@mui/icons-material/LocalMall'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import * as React from 'react'
+import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import DialogSignout from '@/components/commons/dialog-signout'
 
 const defaultTheme = createTheme()
 
@@ -23,7 +26,31 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 const textTitle = 'Happy Shopping'
 
 const ProductsComponent = (props: any): JSX.Element => {
-  const ExitAction = props && props.status === 'authenticated' ? <Tooltip title="Sign Out"><ExitToAppIcon sx={{ mr: 0 }} /></Tooltip> : <span />
+  const [open, setOpen] = React.useState(false)
+  const router = useRouter()
+
+  const handleDialog = (type: string, value: any) => {
+    if (type === 'update:close') {
+      setOpen(value)
+    } else if (type === 'update:accept') {
+      setTimeout(() => {
+        signOut({ redirect: false })
+        router.push('/signin')
+      }, 500)
+    }
+  }
+
+  const ExitAction =
+    props && props.status === 'authenticated' ? (
+      <Tooltip title="Sign Out">
+        <IconButton aria-label="exit" sx={{ color: 'white' }} onClick={() => setOpen(true)}>
+          <ExitToAppIcon sx={{ mr: 0 }} />
+        </IconButton>
+      </Tooltip>
+    ) : (
+      <span />
+    )
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -33,6 +60,7 @@ const ProductsComponent = (props: any): JSX.Element => {
           <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             {textTitle}
           </Typography>
+
           {ExitAction}
         </Toolbar>
       </AppBar>
@@ -46,10 +74,6 @@ const ProductsComponent = (props: any): JSX.Element => {
               Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so
               folks don&apos;t simply skip over it entirely.
             </Typography>
-            <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center">
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
-            </Stack>
           </Container>
         </Box>
         <Container sx={{ py: 2 }} maxWidth="md">
@@ -74,6 +98,7 @@ const ProductsComponent = (props: any): JSX.Element => {
           </Grid>
         </Container>
       </main>
+      <DialogSignout open={open} click={handleDialog} />
     </ThemeProvider>
   )
 }

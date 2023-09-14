@@ -4,6 +4,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import Grid from '@mui/material/Grid'
 import * as React from 'react'
 
 const DialogSignout = (props: any): JSX.Element => {
@@ -13,20 +14,30 @@ const DialogSignout = (props: any): JSX.Element => {
     props?.click('update:close', false)
   }
 
+  const handleAccept = () => {
+    props?.click('update:accept', true)
+  }
+
   return (
-    <div>
+    <div style={{ padding: '4px' }}>
       <Dialog open={isOpen} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Signout'}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
-          </DialogContentText>
+          <DialogContentText id="alert-dialog-description">Are you sure to logout?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
-          </Button>
+          <Grid container spacing={2}>
+            <Grid item>
+              <Button variant="outlined" color="error" sx={{ width: '120px' }} onClick={handleClose}>
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="outlined" autoFocus sx={{ width: '120px' }} onClick={handleAccept}>
+                Yes
+              </Button>
+            </Grid>
+          </Grid>
         </DialogActions>
       </Dialog>
     </div>
