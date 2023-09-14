@@ -15,10 +15,14 @@ import { useRouter, useParams } from 'next/navigation'
 import { apiGetProductById } from '@/methods/service-product'
 import { apiPostBuy } from '@/methods/service-transaction'
 import { toCurrency } from '@/methods/helper-formatter'
+import Copyright from '@/components/commons/copyright'
+import DisplaySnackbar from '@/components/commons/display-snackbar'
 
 const ProductsDetailComponent = (props: any): JSX.Element => {
   const params: any = useParams()
   const router = useRouter()
+  const [open, setOpen] = React.useState(false)
+  const [errorMessage, setErrorMessage]: any = React.useState('Not available')
   const [models, setModels] = React.useState({ quantity: '1' })
   const [counter, setCounter] = React.useState(1)
   const [content, setContent] = React.useState({} as any)
@@ -46,7 +50,12 @@ const ProductsDetailComponent = (props: any): JSX.Element => {
     const token = props.session?.user?.accessToken || ''
     const payloads = { product_id: params.id, quantity: counter, price: content.price }
     const result = await apiPostBuy(token, payloads)
-    console.log(result)
+    if (result.error) {
+      setErrorMessage(result.status + ' ' + result.error)
+      setOpen(true)
+    } else {
+      router.push(`/transaction/${result.id}`)
+    }
   }
 
   if (Object.keys(content).length === 0) {
@@ -68,9 +77,6 @@ const ProductsDetailComponent = (props: any): JSX.Element => {
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography gutterBottom variant="h5" component="h2">
                 {content.name}
-              </Typography>
-              <Typography gutterBottom sx={{ fontSize: 14 }}>
-                <b>Product Number:</b> {content.sku}
               </Typography>
               <Typography color="text.secondary" gutterBottom sx={{ fontSize: 16 }}>
                 Rp. {toCurrency(content.price || 0)}
@@ -100,7 +106,9 @@ const ProductsDetailComponent = (props: any): JSX.Element => {
             </CardActions>
           </Card>
         </Grid>
+        <Copyright sx={{ mt: 2, mb: 4 }} />
       </Container>
+      <DisplaySnackbar open={open} errorMessage={errorMessage} handleClose={() => setOpen(false)} />
     </Box>
   )
 }

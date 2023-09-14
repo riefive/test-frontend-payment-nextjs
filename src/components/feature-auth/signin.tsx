@@ -1,4 +1,3 @@
-import Alert from '@mui/material/Alert'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -7,15 +6,14 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
-import Snackbar from '@mui/material/Snackbar'
-import IconButton from '@mui/material/IconButton'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import CloseIcon from '@mui/icons-material/Close'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import * as React from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { email, minLength, string, safeParse } from 'valibot'
+import Copyright from '@/components/commons/copyright'
+import DisplaySnackbar from '@/components/commons/display-snackbar'
 
 const defaultTheme = createTheme()
 
@@ -27,16 +25,6 @@ const LoginSchema: any = {
   ]),
 }
 
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit">Your Website</Link> {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
-
 const LoginComponent = (): JSX.Element => {
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
@@ -44,11 +32,6 @@ const LoginComponent = (): JSX.Element => {
   const [errorMessage, setErrorMessage]: any = React.useState('Not available')
   const [validations, setValidations]: any = React.useState({})
   const router = useRouter()
-
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') return
-    setOpen(false)
-  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -84,14 +67,6 @@ const LoginComponent = (): JSX.Element => {
       setLoading(false)
     }, 500)
   }
-
-  const action = (
-    <React.Fragment>
-      <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </React.Fragment>
-  )
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -147,18 +122,7 @@ const LoginComponent = (): JSX.Element => {
         </Box>
         <Copyright sx={{ mt: 2, mb: 4 }} />
       </Container>
-      <Snackbar
-        open={open}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        autoHideDuration={2500}
-        onClose={handleClose}
-        message={errorMessage}
-        action={action}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+      <DisplaySnackbar open={open} errorMessage={errorMessage} handleClose={() => setOpen(false)} />
     </ThemeProvider>
   )
 }

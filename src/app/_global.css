@@ -1,4 +1,4 @@
-input {
+input[type='number'] {
   text-align: center;
   position: relative;
 }

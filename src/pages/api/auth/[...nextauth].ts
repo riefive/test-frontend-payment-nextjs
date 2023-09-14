@@ -14,7 +14,6 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         try {
           const result = await apiGetLogin(credentials)
-          console.log(result)
           if (!result || result?.statusCode === 401) {
             return Promise.reject(new Error(result.message || 'Unathorized'))
           } else {
