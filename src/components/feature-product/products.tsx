@@ -33,13 +33,14 @@ const ProductsComponent = (props: any): JSX.Element => {
   const [lists, setLists] = React.useState([])
   const router = useRouter()
 
+  /* eslint-disable */
   React.useEffect(() => {
     apiGetProduct({ limit: 25 }).then((result) => {
       if (result?.data && Array.isArray(result.data)) {
         setLists(result.data)
       }
     })
-  }, [open])
+  }, [])
 
   const handleDialog = (type: string, value: any) => {
     if (type === 'update:close') {
