@@ -21,7 +21,7 @@ export function isLoggedIn(options: any) {
 
 export function isRestricted(options: any) {
   const { status, session, router } = options
-  const sessionUser = getSessionClient(session)
+  const sessionUser = getSessionClient({ session })
   const logged = isLoggedIn({ status, router })
   if (logged && sessionUser?.role !== 'admin') {
     router.push('/')

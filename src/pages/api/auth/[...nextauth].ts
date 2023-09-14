@@ -12,16 +12,21 @@ export const authOptions: NextAuthOptions = {
       type: 'credentials',
       credentials: {},
       async authorize(credentials, req) {
-        const result = await apiGetLogin(credentials)
-        if (!result || result?.statusCode === 401) {
-          return Promise.reject(new Error(result.message || 'Unathorized'))
-        } else {
-          const profile = await apiGetProfile(result || {})
-          if (profile) {
-            const data = { accessToken: result?.access_token, refreshToken: result?.refresh_token }
-            return Object.assign({}, profile, data)
+        try {
+          const result = await apiGetLogin(credentials)
+          console.log(result)
+          if (!result || result?.statusCode === 401) {
+            return Promise.reject(new Error(result.message || 'Unathorized'))
+          } else {
+            const profile = await apiGetProfile(result || {})
+            if (profile) {
+              const data = { accessToken: result?.access_token, refreshToken: result?.refresh_token }
+              return Object.assign({}, profile, data)
+            }
+            return null
           }
-          return null
+        } catch (error) {
+          return Promise.reject(error)
         }
       },
     }),

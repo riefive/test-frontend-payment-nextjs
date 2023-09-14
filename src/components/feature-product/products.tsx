@@ -19,15 +19,27 @@ import * as React from 'react'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import DialogSignout from '@/components/commons/dialog-signout'
+import { apiGetProduct } from '@/methods/service-product'
+import { toCurrency } from '@/methods/helper-formatter'
 
 const defaultTheme = createTheme()
 
+const isDummy = false
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 const textTitle = 'Happy Shopping'
 
 const ProductsComponent = (props: any): JSX.Element => {
   const [open, setOpen] = React.useState(false)
+  const [lists, setLists] = React.useState([])
   const router = useRouter()
+
+  React.useEffect(() => {
+    apiGetProduct({ limit: 25 }).then((result) => {
+      if (result?.data && Array.isArray(result.data)) {
+        setLists(result.data)
+      }
+    })
+  }, [open])
 
   const handleDialog = (type: string, value: any) => {
     if (type === 'update:close') {
@@ -40,7 +52,50 @@ const ProductsComponent = (props: any): JSX.Element => {
     }
   }
 
-  const ExitAction =
+  const ListComponent = isDummy
+    ? cards.map((card) => (
+        <Grid item key={card} xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardMedia component="div" sx={{ pt: '56.25%' }} image="https://source.unsplash.com/random?wallpapers" />
+            <CardContent sx={{ flexGrow: 1 }}>
+              <Typography gutterBottom variant="h5" component="h2">
+                Heading
+              </Typography>
+              <Typography>This is a media card. You can use this section to describe the content.</Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small">View</Button>
+              <Button size="small">Edit</Button>
+            </CardActions>
+          </Card>
+        </Grid>
+      ))
+    : lists.map((content: any) => (
+        <Grid item key={content.id} xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardMedia component="div" sx={{ pt: '56.25%' }} image={content.image} />
+            <CardContent sx={{ flexGrow: 1 }}>
+              <Typography gutterBottom variant="h5" component="h2">
+                {content.name}
+              </Typography>
+              <Typography gutterBottom sx={{ fontSize: 14 }}>
+                <b>Product Number:</b> {content.sku}
+              </Typography>
+              <Typography color="text.secondary" gutterBottom sx={{ fontSize: 16 }}>
+                Rp. {toCurrency(content.price || 0)}
+              </Typography>
+              <Typography>{content.description}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant="outlined" size="small" fullWidth>
+                View
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+      ))
+
+  const ExitActionComponent =
     props && props.status === 'authenticated' ? (
       <Tooltip title="Sign Out">
         <IconButton aria-label="exit" sx={{ color: 'white' }} onClick={() => setOpen(true)}>
@@ -60,8 +115,7 @@ const ProductsComponent = (props: any): JSX.Element => {
           <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             {textTitle}
           </Typography>
-
-          {ExitAction}
+          {ExitActionComponent}
         </Toolbar>
       </AppBar>
       <main>
@@ -78,23 +132,7 @@ const ProductsComponent = (props: any): JSX.Element => {
         </Box>
         <Container sx={{ py: 2 }} maxWidth="md">
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardMedia component="div" sx={{ pt: '56.25%' }} image="https://source.unsplash.com/random?wallpapers" />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
-                    </Typography>
-                    <Typography>This is a media card. You can use this section to describe the content.</Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+            {ListComponent}
           </Grid>
         </Container>
       </main>
