@@ -10,3 +10,14 @@ export const apiGetProduct = async (data: any) => {
     return error
   }
 }
+
+export const apiGetProductById = async (data: any) => {
+  try {
+    const result = await fetch(process.env.NEXT_PUBLIC_API_URL + `/product/${data.id}`, {
+      method: 'get',
+    })
+    return await result.json()
+  } catch (error) {
+    return error
+  }
+}

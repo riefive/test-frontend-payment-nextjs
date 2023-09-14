@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { isLoggedIn } from '@/methods/middleware-client'
 import Products from '@/components/feature-product/products'
 
-export default function Home() {
+const PageHome = (): JSX.Element => {
   const { status, data: session } = useSession()
   const router = useRouter()
 
@@ -15,3 +15,5 @@ export default function Home() {
 
   return <Products status={status} />
 }
+
+export default PageHome

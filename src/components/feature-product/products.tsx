@@ -87,7 +87,7 @@ const ProductsComponent = (props: any): JSX.Element => {
               <Typography>{content.description}</Typography>
             </CardContent>
             <CardActions>
-              <Button variant="outlined" size="small" fullWidth>
+              <Button variant="outlined" size="small" fullWidth onClick={() => router.push(`/product/${content.id}`)}>
                 View
               </Button>
             </CardActions>
