@@ -40,16 +40,19 @@ const TransactionDetailComponent = (props: any): JSX.Element => {
   const handleSubmit = async () => {
     const token = props.session?.user?.accessToken || ''
     const tokenTransaction = content?.token || ''
-    const setObject = (result: any) => ({
-      id: result?.transaction_id || '',
-      transaction_id: result?.transaction_id || '',
-      transaction_status: result?.transaction_status || '',
-      status_code: result?.status_code || '',
-      status_message: result?.status_message || '',
-      total: result?.gross_amount || 0,
-      payment_type: result?.payment_type || '',
-      print_url: result?.pdf_url || '',
-    })
+    const setObject = (result: any) => {
+      return {
+        id: result?.transaction_id || '',
+        transaction_id: result?.order_id || content?.id || '',
+        transaction_status: result?.transaction_status || '',
+        transaction_time: result?.transaction_time || '',
+        status_code: result?.status_code || '',
+        status_message: result?.status_message || '',
+        total: result?.gross_amount || '0',
+        payment_type: result?.payment_type || '',
+        print_url: result?.pdf_url || '',
+      }
+    }
     if (typeof window !== 'undefined') {
       const snap = (window as any)?.snap
       if (!snap) return
@@ -60,8 +63,12 @@ const TransactionDetailComponent = (props: any): JSX.Element => {
         onPending: async (result: any) => {
           await apiPostPayment(token, setObject(result))
         },
-        onError: (result: any) => {
-          console.log(result)
+        onError: async (result: any) => {
+          await apiPostPayment(token, {
+            transaction_id: result?.order_id || content?.id || '',
+            status_code: result?.status_code || '',
+            status_message: result?.status_message || '',
+          })
         },
         onClose: () => {
           console.log('customer closed the popup without finishing the payment')
