@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import Head from 'next/head'
+import Script from 'next/script'
 import { Inter } from 'next/font/google'
 import ProviderAuth from '@/components/provider-auth'
 
@@ -18,7 +20,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: any) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <Head>
+        <title>Implement Payment</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+      </Head>
+      <Script type="text/javascript" src={process.env.MIDTRANS_SNAP_URL} data-client-key={process.env.MIDTRANS_CLIENT_KEY} />
+      <body>
         <ProviderAuth>{children}</ProviderAuth>
       </body>
     </html>

@@ -8,7 +8,7 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { apiGetTransactionDetail } from '@/methods/service-transaction'
+import { apiGetTransactionDetail, apiPostPayment } from '@/methods/service-transaction'
 import { toCurrency } from '@/methods/helper-formatter'
 import Copyright from '@/components/commons/copyright'
 import DisplaySnackbar from '@/components/commons/display-snackbar'
@@ -39,7 +39,35 @@ const TransactionDetailComponent = (props: any): JSX.Element => {
 
   const handleSubmit = async () => {
     const token = props.session?.user?.accessToken || ''
-    console.log(token)
+    const tokenTransaction = content?.token || ''
+    const setObject = (result: any) => ({
+      id: result?.transaction_id || '',
+      transaction_id: result?.transaction_id || '',
+      transaction_status: result?.transaction_status || '',
+      status_code: result?.status_code || '',
+      status_message: result?.status_message || '',
+      total: result?.gross_amount || 0,
+      payment_type: result?.payment_type || '',
+      print_url: result?.pdf_url || '',
+    })
+    if (typeof window !== 'undefined') {
+      const snap = (window as any)?.snap
+      if (!snap) return
+      snap.pay(tokenTransaction, {
+        onSuccess: async (result: any) => {
+          await apiPostPayment(token, setObject(result))
+        },
+        onPending: async (result: any) => {
+          await apiPostPayment(token, setObject(result))
+        },
+        onError: (result: any) => {
+          console.log(result)
+        },
+        onClose: () => {
+          console.log('customer closed the popup without finishing the payment')
+        },
+      })
+    }
   }
 
   const setTimeDisplay = (date: string) => {

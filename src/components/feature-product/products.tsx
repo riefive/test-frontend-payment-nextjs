@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import DialogSignout from '@/components/commons/dialog-signout'
 import { apiGetProduct } from '@/methods/service-product'
 import { toCurrency } from '@/methods/helper-formatter'
+import Copyright from '@/components/commons/copyright'
 
 const defaultTheme = createTheme()
 
@@ -136,6 +137,7 @@ const ProductsComponent = (props: any): JSX.Element => {
             {ListComponent}
           </Grid>
         </Container>
+        <Copyright sx={{ mt: 2, mb: 4 }} />
       </main>
       <DialogSignout open={open} click={handleDialog} />
     </ThemeProvider>
